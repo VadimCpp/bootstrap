@@ -7,6 +7,7 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var header = require('gulp-header');
 var rename = require('gulp-rename');
+var uglify = require('gulp-uglify');
 var cleanCSS = require('gulp-clean-css');
 var browserSync = require('browser-sync').create();
 var pkg = require('./package.json');
@@ -38,6 +39,9 @@ var PATHS = {
         ],
         CSS: [
             './src/css/boilerplate.css'
+        ],
+        JS: [
+            './src/js/boilerplate.js'
         ],
         BOOTSTRAP: {
             JS: [
@@ -133,8 +137,22 @@ gulp.task('dev-minify-css', function() {
 
 
 
+gulp.task('dev-minify-js', function() {
+    return gulp.src(PATHS.SOURCES.JS)
+        .pipe(uglify())
+        .pipe(header(banner, { pkg: pkg }))
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest(DIST.DEV.JS))
+        .pipe(browserSync.reload({
+            stream: true
+        }))
+});
+
+
+
 gulp.task('dev-watch', function() {
     gulp.watch(PATHS.SOURCES.HTML, browserSync.reload);
+    gulp.watch(PATHS.SOURCES.JS, ['dev-minify-js', browserSync.reload]);
     gulp.watch(PATHS.SOURCES.CSS, ['dev-minify-css', browserSync.reload]);
     gulp.watch(PATHS.SOURCES.SASS, ['dev-sass', browserSync.reload]);
     gulp.watch(PATHS.SOURCES.JQUERY, ['dev-jquery', browserSync.reload]);
