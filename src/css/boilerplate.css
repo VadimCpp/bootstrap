@@ -8,3 +8,7 @@ body > section.container > h1 {
 
 body > section.container > p {
   color: brown; }
+  body > section.container > p.some-fixed-position {
+    position: fixed;
+    bottom: 15px;
+    right: 50px; }

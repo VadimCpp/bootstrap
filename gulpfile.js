@@ -8,6 +8,7 @@ var sass = require('gulp-sass');
 var header = require('gulp-header');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
+var htmlmin = require('gulp-htmlmin');
 var cleanCSS = require('gulp-clean-css');
 var browserSync = require('browser-sync').create();
 var pkg = require('./package.json');
@@ -43,6 +44,17 @@ var PATHS = {
         JS: [
             './src/js/boilerplate.js'
         ],
+        MIN: {
+            JS: [
+                './src/js/jquery.min.js',
+                './src/js/bootstrap.min.js',
+                './src/js/boilerplate.min.js'
+            ],
+            CSS: [
+                './src/css/bootstrap.min.css',
+                './src/css/boilerplate.min.css'
+            ]
+        },
         BOOTSTRAP: {
             JS: [
                 './node_modules/bootstrap/dist/js/bootstrap.min.js'
@@ -67,6 +79,12 @@ var DIST = {
         JS: './src/js',
         CSS: './src/css',
         FONTS: './src/fonts'
+    },
+    BLD: {
+        ROOT: './dist',
+        JS: './dist/js',
+        CSS: './dist/css',
+        FONTS: './dist/fonts'
     }
 };
 
@@ -164,3 +182,17 @@ gulp.task('dev-watch', function() {
 
 
 gulp.task('default', ['dev-browser-sync', 'dev-jquery', 'dev-bootstrap-js', 'dev-bootstrap-css', 'dev-bootstrap-fonts', 'dev-watch']);
+
+
+
+gulp.task('build', function() {
+    gulp.src(PATHS.SOURCES.HTML)
+        .pipe(htmlmin({collapseWhitespace: true}))
+        .pipe(gulp.dest(DIST.BLD.ROOT));
+    gulp.src(PATHS.SOURCES.MIN.JS)
+        .pipe(gulp.dest(DIST.BLD.JS));
+    gulp.src(PATHS.SOURCES.MIN.CSS)
+        .pipe(gulp.dest(DIST.BLD.CSS));
+    gulp.src(PATHS.SOURCES.BOOTSTRAP.FONTS)
+        .pipe(gulp.dest(DIST.BLD.FONTS));
+});

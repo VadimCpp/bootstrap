@@ -8,6 +8,12 @@ body {
 
         > p {
             color: brown;
+
+            &.some-fixed-position {
+                position: fixed;
+                bottom: 15px;
+                right: 50px;
+            }
         }
 
     }
