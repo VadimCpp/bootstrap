@@ -4,7 +4,20 @@
 /* ---------------------------------------------------------------- */
 
 var gulp = require('gulp');
+var sass = require('gulp-sass');
+var header = require('gulp-header');
+var rename = require('gulp-rename');
+var cleanCSS = require('gulp-clean-css');
 var browserSync = require('browser-sync').create();
+var pkg = require('./package.json');
+
+var banner = ['/*!\n',
+    ' * Start Bootstrap - <%= pkg.title %> v<%= pkg.version %> (<%= pkg.homepage %>)\n',
+    ' * Copyright 2016-' + (new Date()).getFullYear(), ' <%= pkg.author %>\n',
+    ' * Licensed under <%= pkg.license %>\n',
+    ' */\n',
+    ''
+].join('');
 
 
 
@@ -19,6 +32,12 @@ var PATHS = {
         ],
         JQUERY: [
             './node_modules/jquery/dist/jquery.min.js'
+        ],
+        SASS: [
+            './src/sass/**/*.scss'
+        ],
+        CSS: [
+            './src/css/boilerplate.css'
         ],
         BOOTSTRAP: {
             JS: [
@@ -91,8 +110,33 @@ gulp.task('dev-jquery', function() {
 
 
 
+gulp.task('dev-sass', function () {
+    return gulp.src(PATHS.SOURCES.SASS)
+        .pipe(sass().on('error', sass.logError))
+        .pipe(header(banner, { pkg: pkg }))
+        .pipe(gulp.dest(DIST.DEV.CSS));
+});
+
+
+
+gulp.task('dev-minify-css', function() {
+    return gulp.src(PATHS.SOURCES.CSS)
+        .pipe(cleanCSS({compatibility: '*', debug: true}, function(details) {
+            console.log(details.name + ': ' + details.stats.originalSize);
+            console.log(details.name + ': ' + details.stats.minifiedSize);
+        }))
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest(DIST.DEV.CSS));
+});
+
+
+
 gulp.task('dev-watch', function() {
     gulp.watch(PATHS.SOURCES.HTML, browserSync.reload);
+    gulp.watch(PATHS.SOURCES.CSS, ['dev-minify-css', browserSync.reload]);
+    gulp.watch(PATHS.SOURCES.SASS, ['dev-sass', browserSync.reload]);
     gulp.watch(PATHS.SOURCES.JQUERY, ['dev-jquery', browserSync.reload]);
     gulp.watch(PATHS.SOURCES.BOOTSTRAP.JS, ['dev-bootstrap-js', browserSync.reload]);
     gulp.watch(PATHS.SOURCES.BOOTSTRAP.CSS, ['bootstrapCss', browserSync.reload]);
