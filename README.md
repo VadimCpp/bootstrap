@@ -1,5 +1,7 @@
 # Bootstrap Boilerplate
 
+> **UPD:** шаблон безнадежно устарел и отправлен в архив
+
 This website is a boilerplate.
 Use it if you want to build single-page bootstrap website.
         
